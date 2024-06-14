@@ -17,10 +17,12 @@ usersRouter.get("/", async (req, res) => {
     if (email) {
       fetchUsers = await db
         .from("m_users")
-        .select("user_id, name, email")
+        .select("user_id, name, email, role")
         .eq("email", email);
     } else {
-      fetchUsers = await db.from("m_users").select("user_id, name, email");
+      fetchUsers = await db
+        .from("m_users")
+        .select("user_id, name, email, role");
     }
 
     return res.status(200).json({
@@ -35,8 +37,8 @@ usersRouter.get("/", async (req, res) => {
   }
 });
 
-usersRouter.post("/signup", async (req, res) => {
-  const { name, email, password } = req.body;
+usersRouter.post("/register", async (req, res) => {
+  const { name, email, password, role } = req.body;
 
   try {
     // Check if the user already exists
@@ -59,10 +61,11 @@ usersRouter.post("/signup", async (req, res) => {
         {
           name,
           email,
+          role,
           password: hashedPassword,
         },
       ])
-      .select("user_id, name, email");
+      .select("user_id, name, email, role");
 
     return res
       .status(200)
@@ -73,14 +76,14 @@ usersRouter.post("/signup", async (req, res) => {
   }
 });
 
-usersRouter.post("/signin", async (req, res) => {
+usersRouter.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
     // Fetch user data from Supabase table
     const { data: users, error } = await db
       .from("m_users")
-      .select("user_id, name, email")
+      .select("user_id, name, email, password, role")
       .eq("email", email)
       .limit(1);
 
@@ -113,6 +116,7 @@ usersRouter.post("/signin", async (req, res) => {
         user_id: user.user_id,
         name: user.name,
         email: user.email,
+        role: user.role,
       },
       token,
     });
