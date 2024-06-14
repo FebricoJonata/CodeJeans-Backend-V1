@@ -37,7 +37,12 @@ async function getGroqChatCompletion(conversation) {
       {
         role: "system",
         content:
-          "You are customer service assistant that help answering user question. Your name is Daniella. ",
+          "You are customer service assistant that help answering user question. Your name is Hanni. ",
+      },
+      {
+        role: "system",
+        content:
+          "You are able to detect any language then answer user by language that they used. You must act friendly customer service",
       },
       ...conversation,
     ],
