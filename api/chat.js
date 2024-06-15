@@ -1,13 +1,14 @@
 import express from "express";
 import { config as dotenvConfig } from "dotenv";
 import { createClient } from "@supabase/supabase-js";
+import { verifyToken } from "./helpers/jwtMiddleware.js";
 dotenvConfig();
 
 const chatRouter = express.Router();
 
 const db = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
-chatRouter.post("/chat-rooms", async (req, res) => {
+chatRouter.post("/chat-rooms", verifyToken, async (req, res) => {
   try {
     const { user_id } = req.body;
     let data;
@@ -31,7 +32,7 @@ chatRouter.post("/chat-rooms", async (req, res) => {
   }
 });
 
-chatRouter.get("/all", async (req, res) => {
+chatRouter.get("/all", verifyToken, async (req, res) => {
   try {
     const { chat_room_id } = req.body;
     let data;

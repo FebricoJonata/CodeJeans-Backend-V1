@@ -3,13 +3,14 @@ import { config as dotenvConfig } from "dotenv";
 import { createClient } from "@supabase/supabase-js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { verifyToken } from "./helpers/jwtMiddleware.js";
 
 dotenvConfig();
 const usersRouter = express.Router();
 
 const db = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
-usersRouter.get("/", async (req, res) => {
+usersRouter.get("/", verifyToken, async (req, res) => {
   try {
     const { email } = req.body;
     let fetchUsers;
