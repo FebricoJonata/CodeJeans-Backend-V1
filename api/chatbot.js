@@ -19,8 +19,6 @@ chatbotRouter.post("/chat-completion", async (req, res) => {
 
     const contentValue = conversation[0].content;
 
-    checkUserCurrentSentiment(contentValue);
-
     // Ensure conversation is an array
     const messages = Array.isArray(conversation)
       ? conversation
