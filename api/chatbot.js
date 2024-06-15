@@ -57,7 +57,7 @@ async function getGroqChatCompletion(conversation) {
       {
         role: "system",
         content:
-          "If the user asks you about something out of your knowledge as customer service, Don't try to answer them if like that.",
+          "If the user asks you about something out of your knowledge as customer service, Don't try to answer them if that irrelevant with you jobdesc as customer service.",
       },
       ...conversation,
     ],

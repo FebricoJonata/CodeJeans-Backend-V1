@@ -32,7 +32,7 @@ chatRouter.post("/chat-rooms", verifyToken, async (req, res) => {
   }
 });
 
-chatRouter.get("/all", verifyToken, async (req, res) => {
+chatRouter.post("/all", verifyToken, async (req, res) => {
   try {
     const { chat_room_id } = req.body;
     let data;
