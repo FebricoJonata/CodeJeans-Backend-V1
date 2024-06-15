@@ -27,10 +27,9 @@ chatbotRouter.post("/chat-completion", async (req, res) => {
   try {
     const { conversation, user_id } = req.body;
 
-    const contentValue = conversation.map((item) => item.content);
-    const results = await client.analyzeSentiment(contentValue);
-
     if (user_id) {
+      const contentValue = conversation.map((item) => item.content);
+      const results = await client.analyzeSentiment(contentValue);
       const currentDate = new Date().toISOString().split("T")[0];
       const { data, error } = await db
         .from("t_feedback")

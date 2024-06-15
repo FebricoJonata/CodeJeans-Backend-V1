@@ -2,11 +2,19 @@ import express from "express";
 import { config as dotenvConfig } from "dotenv";
 import { createClient } from "@supabase/supabase-js";
 import { verifyToken } from "./helpers/jwtMiddleware.js";
+import {
+  TextAnalyticsClient,
+  AzureKeyCredential,
+} from "@azure/ai-text-analytics";
 dotenvConfig();
 
 const chatRouter = express.Router();
 
 const db = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+const client = new TextAnalyticsClient(
+  process.env.SENTIMENT_ANALYSIS_URL,
+  new AzureKeyCredential(process.env.SENTIMENT_ANALYSIS_KEY)
+);
 
 chatRouter.post("/chat-rooms", verifyToken, async (req, res) => {
   try {
@@ -38,7 +46,7 @@ chatRouter.post("/all", verifyToken, async (req, res) => {
     let data;
 
     if (chat_room_id) {
-      data = await db 
+      data = await db
         .from("t_chat")
         .select("*")
         .eq("chat_room_id", chat_room_id);
@@ -73,8 +81,22 @@ chatRouter.post("/create", async (req, res) => {
       .eq("user_id", sender_id)
       .limit(1);
 
-    // Get current date in yyyy-mm-dd format
-    const currentDate = new Date().toISOString().split("T")[0];
+    const results = await client.analyzeSentiment([message]);
+
+    if (sender_id) {
+      const currentDate = new Date().toISOString().split("T")[0];
+      const { data, error } = await db
+        .from("t_feedback")
+        .insert([
+          {
+            feedback: message,
+            category: results[0].sentiment,
+            created_at: currentDate,
+            user_id: sender_id,
+          },
+        ])
+        .select();
+    }
 
     const { data, error } = await db
       .from("t_chat")
