@@ -38,7 +38,7 @@ chatRouter.post("/all", verifyToken, async (req, res) => {
     let data;
 
     if (chat_room_id) {
-      data = await db
+      data = await db 
         .from("t_chat")
         .select("*")
         .eq("chat_room_id", chat_room_id);

@@ -2,6 +2,11 @@ import { Groq } from "groq-sdk";
 import { config as dotenvConfig } from "dotenv";
 import express from "express";
 import { createClient } from "@supabase/supabase-js";
+import {
+  TextAnalyticsClient,
+  AzureKeyCredential,
+} from "@azure/ai-text-analytics";
+
 dotenvConfig();
 
 const chatbotRouter = express.Router();
@@ -11,13 +16,34 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
+const client = new TextAnalyticsClient(
+  process.env.SENTIMENT_ANALYSIS_URL,
+  new AzureKeyCredential(process.env.SENTIMENT_ANALYSIS_KEY)
+);
+
 let conversationHistory = [];
 
 chatbotRouter.post("/chat-completion", async (req, res) => {
   try {
-    const { conversation } = req.body;
+    const { conversation, user_id } = req.body;
 
-    const contentValue = conversation[0].content;
+    const contentValue = conversation.map((item) => item.content);
+    const results = await client.analyzeSentiment(contentValue);
+
+    if (user_id) {
+      const currentDate = new Date().toISOString().split("T")[0];
+      const { data, error } = await db
+        .from("t_feedback")
+        .insert([
+          {
+            feedback: contentValue[0],
+            category: results[0].sentiment,
+            created_at: currentDate,
+            user_id,
+          },
+        ])
+        .select();
+    }
 
     // Ensure conversation is an array
     const messages = Array.isArray(conversation)
