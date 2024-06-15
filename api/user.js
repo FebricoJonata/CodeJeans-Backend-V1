@@ -9,9 +9,9 @@ const usersRouter = express.Router();
 
 const db = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
-usersRouter.get("/:email", async (req, res) => {
+usersRouter.get("/", async (req, res) => {
   try {
-    const { email } = req.params;
+    const { email } = req.body;
     let fetchUsers;
 
     if (email) {
