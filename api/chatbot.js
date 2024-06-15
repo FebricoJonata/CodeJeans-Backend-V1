@@ -38,10 +38,6 @@ chatbotRouter.post("/chat-completion", async (req, res) => {
   }
 });
 
-async function checkUserCurrentSentiment(message) {
-  
-}
-
 async function getGroqChatCompletion(conversation) {
   return groq.chat.completions.create({
     messages: [

@@ -67,16 +67,17 @@ chatRouter.post("/create", async (req, res) => {
     }
 
     const { data: userData, error: userError } = await db
-      .from("m_user")
+      .from("m_users")
       .select("role")
-      .eq("id", sender_id)
+      .eq("user_id", sender_id)
       .limit(1);
 
-    console.log(userData);
+    // Get current date in yyyy-mm-dd format
+    const currentDate = new Date().toISOString().split("T")[0];
 
     const { data, error } = await db
       .from("t_chat")
-      .insert([{ chat_room_id, message, sender_id }])
+      .insert([{ chat_room_id, message, sender_id, sent_at: currentDate }])
       .select();
 
     if (error) {
