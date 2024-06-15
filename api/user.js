@@ -87,7 +87,15 @@ usersRouter.post("/login", async (req, res) => {
       .eq("email", email)
       .limit(1);
 
-    if (error || !users || users.length === 0) {
+    // Handle fetch errors
+
+    if (error) {
+      console.error("Error fetching user data:", error.message);
+      return res.status(500).json({ error: "Internal server error." });
+    }
+
+    // Check if user exists and passwords match
+    if (!users || users.length === 0) {
       return res
         .status(401)
         .json({ error: "Unauthorized, incorrect email or password." });
@@ -105,12 +113,22 @@ usersRouter.post("/login", async (req, res) => {
     }
 
     // Generate JWT token
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
-      expiresIn: "36h",
-    });
+    const token = jwt.sign(
+      {
+        userId: user.user_id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "36h",
+      }
+    );
 
     // Return user data and JWT token
     return res.status(200).json({
+      code: "200",
       message: "User signed in successfully.",
       user: {
         user_id: user.user_id,

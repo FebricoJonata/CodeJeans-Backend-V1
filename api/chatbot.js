@@ -1,9 +1,12 @@
 import { Groq } from "groq-sdk";
 import { config as dotenvConfig } from "dotenv";
 import express from "express";
+import { createClient } from "@supabase/supabase-js";
 dotenvConfig();
 
 const chatbotRouter = express.Router();
+
+const db = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
@@ -13,6 +16,10 @@ let conversationHistory = [];
 chatbotRouter.post("/chat-completion", async (req, res) => {
   try {
     const { conversation } = req.body;
+
+    const contentValue = conversation[0].content;
+
+    checkUserCurrentSentiment(contentValue);
 
     // Ensure conversation is an array
     const messages = Array.isArray(conversation)
@@ -30,6 +37,10 @@ chatbotRouter.post("/chat-completion", async (req, res) => {
     res.status(500).send({ error: "An error occurred" });
   }
 });
+
+async function checkUserCurrentSentiment(message) {
+  
+}
 
 async function getGroqChatCompletion(conversation) {
   return groq.chat.completions.create({

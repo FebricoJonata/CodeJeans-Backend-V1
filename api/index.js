@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import { verifyToken } from "./helpers/jwtMiddleware.js";
 import bodyParser from "body-parser";
 import chatbotRouter from "./chatbot.js";
 import sentimentAnalysisRouter from "./sentiment-analysis.js";
@@ -17,6 +18,6 @@ app.use("/api/chat", chatbotRouter);
 app.use("/api/text", sentimentAnalysisRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/chat", chatRouter);
-app.use("/api/feedback", feedbackRouter);
+app.use("/api/feedback", verifyToken, feedbackRouter);
 
 app.listen(3000, () => console.log("Server ready on port 3000."));
