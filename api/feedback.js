@@ -14,12 +14,22 @@ feedbackRouter.post("/all", verifyToken, async (req, res) => {
     let data;
 
     if (user_id) {
-      data = await db.from("t_feedback").select("*").eq("user_id", user_id);
+      data = await db
+        .from("t_feedback")
+        .select("*")
+        .eq("user_id", user_id)
+        .order("created_at", { ascending: false })
+        .limit(1);
     } else {
-      data = await db.from("t_feedback").select("*");
+      data = await db
+        .from("t_feedback")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(1);
     }
 
     return res.status(200).json({
+      status: 200,
       body: data,
     });
   } catch (error) {
