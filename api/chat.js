@@ -7,9 +7,9 @@ const chatRouter = express.Router();
 
 const db = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
-chatRouter.post("/chat-rooms", async (req, res) => {
+chatRouter.get("/chat-rooms/:user_id", async (req, res) => {
   try {
-    const { user_id } = req.body;
+    const { user_id } = req.params;
     let data;
 
     if (user_id) {
@@ -31,9 +31,9 @@ chatRouter.post("/chat-rooms", async (req, res) => {
   }
 });
 
-chatRouter.get("/all", async (req, res) => {
+chatRouter.get("/all/:chat_room_id", async (req, res) => {
   try {
-    const { chat_room_id } = req.body;
+    const { chat_room_id } = req.params;
     let data;
 
     if (chat_room_id) {

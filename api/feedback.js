@@ -8,9 +8,9 @@ const db = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
 const feedbackRouter = express.Router();
 
-feedbackRouter.get("/all", verifyToken, async (req, res) => {
+feedbackRouter.get("/all/:user_id", verifyToken, async (req, res) => {
   try {
-    const { user_id } = req.body;
+    const { user_id } = req.params;
     let data;
 
     if (user_id) {
