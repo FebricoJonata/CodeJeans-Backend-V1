@@ -47,12 +47,22 @@ async function getGroqChatCompletion(conversation) {
       {
         role: "system",
         content:
-          "You are able to detect any language then answer user by language that they used. You must act friendly customer service",
+          "You are able to detect any language then answer user by language that they used.",
+      },
+      {
+        role: "system",
+        content:
+          "You mustn't reply with no message if you don't understand what the user said.",
+      },
+      {
+        role: "system",
+        content:
+          "If the user asks you about something out of your knowledge, do not just say sorry. Try to guide the user to rephrase or ask a different question.",
       },
       ...conversation,
     ],
     model: "llama3-8b-8192",
-    temperature: 0.5,
+    temperature: 0.7,
     max_tokens: 1024,
     top_p: 0.5,
     // stream: true,
