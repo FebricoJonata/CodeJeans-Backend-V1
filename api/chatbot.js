@@ -57,12 +57,12 @@ async function getGroqChatCompletion(conversation) {
       {
         role: "system",
         content:
-          "If the user asks you about something out of your knowledge, do not just say sorry. Try to guide the user to rephrase or ask a different question.",
+          "If the user asks you about something out of your knowledge as customer service, Don't try to answer them if like that.",
       },
       ...conversation,
     ],
     model: "llama3-8b-8192",
-    temperature: 0.7,
+    temperature: 0.3,
     max_tokens: 1024,
     top_p: 0.5,
     // stream: true,
