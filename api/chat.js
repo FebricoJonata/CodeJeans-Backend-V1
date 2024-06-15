@@ -81,10 +81,9 @@ chatRouter.post("/create", async (req, res) => {
       .eq("user_id", sender_id)
       .limit(1);
 
-    const results = await client.analyzeSentiment([message]);
-
+    const currentDate = new Date().toISOString().split("T")[0];
     if (sender_id) {
-      const currentDate = new Date().toISOString().split("T")[0];
+      const results = await client.analyzeSentiment([message]);
       const { data, error } = await db
         .from("t_feedback")
         .insert([
