@@ -7,7 +7,7 @@ const chatRouter = express.Router();
 
 const db = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
-chatRouter.get("/chat-rooms", async (req, res) => {
+chatRouter.post("/chat-rooms", async (req, res) => {
   try {
     const { user_id } = req.body;
     let data;
