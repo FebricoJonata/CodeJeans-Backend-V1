@@ -15,7 +15,7 @@ chatRouter.get("/chat-rooms", async (req, res) => {
     if (user_id) {
       data = await db
         .from("t_chat_room_members")
-        .select("chat_room_id, users:user_id(user_id, name)")
+        .select("chat_room:chat_room_id(chat_room_id, room_name)")
         .eq("user_id", user_id);
     }
 
@@ -48,6 +48,47 @@ chatRouter.get("/all", async (req, res) => {
     });
   } catch (error) {
     console.error("Error retrieving Chats:", error.message);
+    return res.status(500).json({
+      status: 500,
+      error: "Internal server error",
+    });
+  }
+});
+
+chatRouter.post("/create", async (req, res) => {
+  try {
+    const { chat_room_id, message, sender_id } = req.body;
+
+    if (!sender_id) {
+      return res.status(400).json({
+        status: 400,
+        error: "sender_id are required",
+      });
+    }
+
+    const { data: userData, error: userError } = await db
+      .from("m_user")
+      .select("role")
+      .eq("id", sender_id)
+      .limit(1);
+
+    console.log(userData);
+
+    const { data, error } = await db
+      .from("t_chat")
+      .insert([{ chat_room_id, message, sender_id }])
+      .select();
+
+    if (error) {
+      throw error;
+    }
+
+    return res.status(201).json({
+      status: 200,
+      body: data,
+    });
+  } catch (error) {
+    console.error("Error inserting chat:", error.message);
     return res.status(500).json({
       status: 500,
       error: "Internal server error",
