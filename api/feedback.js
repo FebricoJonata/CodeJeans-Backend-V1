@@ -8,7 +8,7 @@ const db = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
 const feedbackRouter = express.Router();
 
-feedbackRouter.get("/all", verifyToken, async (req, res) => {
+feedbackRouter.post("/all", verifyToken, async (req, res) => {
   try {
     const { user_id } = req.body;
     let data;
